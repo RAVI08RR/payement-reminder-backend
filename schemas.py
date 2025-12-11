@@ -14,7 +14,7 @@ class InvoiceCreate(BaseModel):
     issue_date: date
     due_date: date
     status: str = "Pending"
-    user_id: int
+    # user_id: int
 
 
 class InvoiceResponse(BaseModel):
@@ -25,7 +25,7 @@ class InvoiceResponse(BaseModel):
     issue_date: date
     due_date: date
     status: str
-    user_id: int
+    # user_id: int
 
     class Config:
         orm_mode = True

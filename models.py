@@ -23,5 +23,5 @@ class Invoice(Base):
     due_date = Column(Date, nullable=False)
     status = Column(String(50), default="Pending")
 
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    user = relationship("User", back_populates="invoices")
+    # user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    # user = relationship("User", back_populates="invoices")
