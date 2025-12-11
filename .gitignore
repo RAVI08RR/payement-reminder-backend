@@ -1,0 +1,14 @@
+# Python compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+.env/
+.env.local
+
+# Pytest / cache
+.pytest_cache/
+.cache/
