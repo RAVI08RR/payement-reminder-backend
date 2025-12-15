@@ -1,11 +1,32 @@
-from pydantic import BaseModel
+from pydantic import BaseModel,EmailStr
 from datetime import date
 
+# ---------- USER ----------
 
-class UserCreate(BaseModel):
+# ---------- REGISTER ----------
+class UserRegister(BaseModel):
     name: str
-    email: str
+    email: EmailStr
+    password: str
 
+
+# ---------- LOGIN ----------
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+
+
+# ---------- RESPONSE ----------
+class UserResponse(BaseModel):
+    id: int
+    name: str
+    email: EmailStr
+
+    class Config:
+        from_attributes = True
+
+
+# ---------- INVOICE ----------
 
 class InvoiceCreate(BaseModel):
     invoice_number: str
@@ -13,19 +34,11 @@ class InvoiceCreate(BaseModel):
     amount: float
     issue_date: date
     due_date: date
-    status: str = "Pending"
-    # user_id: int
 
-
-class InvoiceResponse(BaseModel):
+class InvoiceResponse(InvoiceCreate):
     id: int
-    invoice_number: str
-    customer_name: str
-    amount: float
-    issue_date: date
-    due_date: date
     status: str
-    # user_id: int
+    user_id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
