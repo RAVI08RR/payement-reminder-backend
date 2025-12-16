@@ -11,6 +11,7 @@ class User(Base):
     # hashed_password = Column(String, nullable=False)
     password = Column(String(150), nullable=False)
     invoices = relationship("Invoice", back_populates="user")
+    role = Column(String(20), nullable=False, default="user")
 
 class Invoice(Base):
     __tablename__ = "invoices"

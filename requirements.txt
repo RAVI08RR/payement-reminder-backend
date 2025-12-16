@@ -16,5 +16,6 @@ pydantic[email]
 passlib[bcrypt]
 python-jose[cryptography]
 
+
 # Optional but recommended
 alembic

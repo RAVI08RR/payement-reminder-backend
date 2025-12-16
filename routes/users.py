@@ -19,7 +19,8 @@ def register_user(user: UserRegister, db: Session = Depends(get_db)):
     db_user = User(
         name=user.name,
         email=user.email,
-        password=user.password
+        password=user.password,
+        role=user.role
         # hashed_password=hash_password(user.password)
     )
 
