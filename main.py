@@ -3,7 +3,7 @@ from database import engine
 from models import Base
 from routes import users, invoices
 from fastapi.middleware.cors import CORSMiddleware
-from routes import admin
+from routes import admin, reminders
 
 
 Base.metadata.create_all(bind=engine)
@@ -24,6 +24,7 @@ app.add_middleware(
 app.include_router(admin.router)
 app.include_router(users.router)
 app.include_router(invoices.router)
+app.include_router(reminders.router)
 
 @app.get("/")
 def health():

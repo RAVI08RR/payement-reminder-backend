@@ -1,5 +1,5 @@
 from pydantic import BaseModel,EmailStr,Field
-from datetime import date
+from datetime import date, datetime
 from typing import Optional
 
 # ---------- USER ----------
@@ -59,6 +59,25 @@ class InvoiceResponse(InvoiceCreate):
     issue_date: date
     due_date: date
     user: InvoiceUser
+
+    class Config:
+        from_attributes = True
+
+
+# ---------- REMINDER ----------
+class ReminderCreate(BaseModel):
+    user_id: int
+    invoice_id: int
+    reminder_type: str = "email"
+    status: str = "sent"
+
+class ReminderResponse(BaseModel):
+    id: int
+    user_id: int
+    invoice_id: int
+    reminder_type: str
+    status: str
+    sent_at: datetime
 
     class Config:
         from_attributes = True

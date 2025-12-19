@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, Date, ForeignKey
+from sqlalchemy import Column, Integer, String, Float, Date, ForeignKey,DateTime, func
 from sqlalchemy.orm import relationship
 from database import Base
 
@@ -27,3 +27,21 @@ class Invoice(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     user = relationship("User", back_populates="invoices")
     user_email = Column(String, nullable=False)
+
+
+
+class Reminder(Base):
+    __tablename__ = "reminders"
+
+    id = Column(Integer, primary_key=True, index=True)
+
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    invoice_id = Column(Integer, ForeignKey("invoices.id"), nullable=False)
+
+    reminder_type = Column(String, default="email")  # email / whatsapp / sms
+    status = Column(String, default="sent")          # sent / failed / read / paid
+
+    sent_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    user = relationship("User")
+    invoice = relationship("Invoice")
