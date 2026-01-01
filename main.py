@@ -6,7 +6,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from routes import admin, reminders
 
 
-Base.metadata.create_all(bind=engine)
+try:
+    print("Initializing database tables...")
+    Base.metadata.create_all(bind=engine)
+    print("Database tables initialized successfully.")
+except Exception as e:
+    print(f"CRITICAL ERROR: Failed to initialize database: {e}")
+    # We continue so the health check endpoint can still run and we see logs
 
 app = FastAPI(title="Payment Reminder Backend")
 origins = [
