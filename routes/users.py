@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends,HTTPException, status
 from sqlalchemy.orm import Session
 from database import get_db
 from models import User, Invoice
-from schemas import UserRegister, UserLogin, UserResponse,UserUpdate
+from schemas import UserRegister, UserLogin, UserResponse,UserUpdate, ForgotPasswordRequest, ResetPasswordRequest
 from utils.security import hash_password, verify_password
 from sqlalchemy import func, case
 from datetime import date
@@ -56,6 +56,26 @@ def login(user: UserLogin, db: Session = Depends(get_db)):
             "user_type": db_user.role
         }
     }
+
+@router.post("/forgot-password")
+def forgot_password(request: ForgotPasswordRequest, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.email == request.email).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User with this email does not exist")
+    
+    # In a real app, you would send an email with a reset token here.
+    return {"message": "If this email is registered, you will receive a password reset link shortly."}
+
+@router.post("/reset-password")
+def reset_password(request: ResetPasswordRequest, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.email == request.email).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    user.password = hash_password(request.new_password)
+    db.commit()
+    
+    return {"message": "Password reset successful"}
 
 
 
