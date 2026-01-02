@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends,HTTPException, status
 from sqlalchemy.orm import Session
 from database import get_db
 from models import User, Invoice
-from schemas import UserRegister, UserLogin, UserResponse,UserUpdate, ForgotPasswordRequest, ResetPasswordRequest, ResetPasswordIDRequest
+from schemas import UserRegister, UserLogin, UserResponse,UserUpdate, ForgotPasswordRequest, ResetPasswordRequest, ResetPasswordIDRequest, ChangePasswordRequest
 from utils.security import hash_password, verify_password
 from sqlalchemy import func, case
 from datetime import date
@@ -87,6 +87,22 @@ def reset_password_by_id(user_id: int, request: ResetPasswordIDRequest, db: Sess
     db.commit()
     
     return {"message": f"Password for user {user_id} reset successfully"}
+
+@router.post("/change-password/{user_id}")
+def change_password(user_id: int, request: ChangePasswordRequest, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # 🕵️ Verify old password
+    if not verify_password(request.old_password, user.password):
+        raise HTTPException(status_code=400, detail="Incorrect old password")
+    
+    # 🔒 Hash and update new password
+    user.password = hash_password(request.new_password)
+    db.commit()
+    
+    return {"message": "Password updated successfully"}
 
 
 

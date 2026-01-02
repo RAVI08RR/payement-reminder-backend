@@ -43,6 +43,10 @@ class ResetPasswordRequest(BaseModel):
 class ResetPasswordIDRequest(BaseModel):
     new_password: str = Field(min_length=8, max_length=64)
 
+class ChangePasswordRequest(BaseModel):
+    old_password: str
+    new_password: str = Field(min_length=8, max_length=64)
+
 # ---------- INVOICE ----------
 
 class InvoiceUser(BaseModel):
