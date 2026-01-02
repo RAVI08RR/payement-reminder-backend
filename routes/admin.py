@@ -172,37 +172,5 @@ def update_user(
             "email": user.email
         }
     }
-
-@router.post("/forgot-password")
-def admin_forgot_password(request: ForgotPasswordRequest, db: Session = Depends(get_db)):
-    # Check if user exists and is an admin
-    user = db.query(User).filter(User.email == request.email, User.role == "admin").first()
-    if not user:
-        raise HTTPException(status_code=404, detail="Admin with this email does not exist")
-    
-    return {"message": "If this email is registered as an admin, you will receive a reset link shortly."}
-
-@router.post("/reset-password")
-def admin_reset_password(request: ResetPasswordRequest, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == request.email, User.role == "admin").first()
-    if not user:
-        raise HTTPException(status_code=404, detail="Admin not found")
-    
-    user.password = hash_password(request.new_password)
-    db.commit()
-    
-    return {"message": "Admin password reset successful"}
-
-@router.post("/reset-user-password/{user_id}")
-def admin_reset_user_password(user_id: int, request: ResetPasswordIDRequest, db: Session = Depends(get_db)):
-    # This allows an admin to reset ANY user's password using their ID
-    user = db.query(User).filter(User.id == user_id).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    
-    user.password = hash_password(request.new_password)
-    db.commit()
-    
-    return {"message": f"User {user_id}'s password has been reset by admin"}
     
 

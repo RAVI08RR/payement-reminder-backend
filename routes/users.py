@@ -57,37 +57,6 @@ def login(user: UserLogin, db: Session = Depends(get_db)):
         }
     }
 
-@router.post("/forgot-password")
-def forgot_password(request: ForgotPasswordRequest, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == request.email).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User with this email does not exist")
-    
-    # In a real app, you would send an email with a reset token here.
-    return {"message": "If this email is registered, you will receive a password reset link shortly."}
-
-@router.post("/reset-password")
-def reset_password(request: ResetPasswordRequest, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == request.email).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    
-    user.password = hash_password(request.new_password)
-    db.commit()
-    
-    return {"message": "Password reset successful"}
-
-@router.post("/reset-password-by-id/{user_id}")
-def reset_password_by_id(user_id: int, request: ResetPasswordIDRequest, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.id == user_id).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    
-    user.password = hash_password(request.new_password)
-    db.commit()
-    
-    return {"message": f"Password for user {user_id} reset successfully"}
-
 @router.post("/change-password/{user_id}")
 def change_password(user_id: int, request: ChangePasswordRequest, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.id == user_id).first()

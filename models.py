@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, Float, Date, ForeignKey,DateTime, func
+from sqlalchemy import Column, Integer, String, Float, Date, ForeignKey,DateTime, func, text
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from database import Base
 
@@ -45,3 +46,13 @@ class Reminder(Base):
 
     user = relationship("User")
     invoice = relationship("Invoice")
+
+class PasswordResetToken(Base) :
+    __tablename__ = "password_reset_tokens"
+    
+    id = Column(UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()"))
+    email = Column(String, nullable=False)
+    token = Column(String, nullable=False, index=True)
+    role = Column(String, nullable=False) # 'user' or 'admin'
+    expires_at = Column(DateTime(timezone=True), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())

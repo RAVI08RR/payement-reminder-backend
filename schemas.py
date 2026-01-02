@@ -36,11 +36,11 @@ class UserUpdate(BaseModel):
 class ForgotPasswordRequest(BaseModel):
     email: EmailStr
 
-class ResetPasswordRequest(BaseModel):
-    email: EmailStr
-    new_password: str = Field(min_length=8, max_length=64)
+class TokenValidationRequest(BaseModel):
+    token: str
 
-class ResetPasswordIDRequest(BaseModel):
+class ResetPasswordFlowRequest(BaseModel):
+    token: str
     new_password: str = Field(min_length=8, max_length=64)
 
 class ChangePasswordRequest(BaseModel):
