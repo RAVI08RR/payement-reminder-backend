@@ -3,7 +3,8 @@ from sqlalchemy.orm import Session
 from database import get_db
 from models import User, Invoice
 from schemas import UserRegister, UserLogin, UserResponse,UserUpdate, ForgotPasswordRequest, ResetPasswordFlowRequest, ChangePasswordRequest
-from utils.security import hash_password, verify_password
+from utils.security import hash_password, verify_password, create_access_token
+from utils.auth_bearer import get_current_user
 from sqlalchemy import func, case
 from datetime import date
 
@@ -47,8 +48,13 @@ def login(user: UserLogin, db: Session = Depends(get_db)):
     if not verify_password(user.password, db_user.password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
+    # Create access token
+    access_token = create_access_token(data={"sub": db_user.email, "role": db_user.role, "id": db_user.id})
+
     return {
         "message": "Login successful",
+        "access_token": access_token,
+        "token_type": "bearer",
         "user": {
             "id": db_user.id,
             "name": db_user.name,
@@ -57,7 +63,7 @@ def login(user: UserLogin, db: Session = Depends(get_db)):
         }
     }
 
-@router.post("/change-password/{user_id}")
+@router.post("/change-password/{user_id}", dependencies=[Depends(get_current_user)])
 def change_password(user_id: int, request: ChangePasswordRequest, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
@@ -76,7 +82,7 @@ def change_password(user_id: int, request: ChangePasswordRequest, db: Session = 
 
 
 
-@router.get("/", response_model=list[UserResponse])
+@router.get("/", response_model=list[UserResponse], dependencies=[Depends(get_current_user)])
 def get_users(db: Session = Depends(get_db)):
     return db.query(User).all()
 
@@ -85,7 +91,8 @@ def get_users(db: Session = Depends(get_db)):
 @router.get("/{user_id}/dashboard")
 def user_dashboard(
     user_id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
 ):
     # ✅ Ensure user exists
     user = db.query(User).filter(User.id == user_id).first()
@@ -180,7 +187,8 @@ def user_dashboard(
 def update_user(
     user_id: int,
     data: UserUpdate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
 ):
     user = db.query(User).filter(User.id == user_id).first()
 

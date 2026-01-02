@@ -4,6 +4,8 @@ from models import Base
 from routes import users, invoices, auth
 from fastapi.middleware.cors import CORSMiddleware
 from routes import admin, reminders
+from fastapi import Depends
+from utils.auth_bearer import get_current_user, get_admin_user
 
 
 try:
@@ -28,10 +30,10 @@ app.add_middleware(
 )
 
 app.include_router(auth.router)
-app.include_router(admin.router)
+app.include_router(admin.router, dependencies=[Depends(get_admin_user)])
 app.include_router(users.router)
-app.include_router(invoices.router)
-app.include_router(reminders.router)
+app.include_router(invoices.router, dependencies=[Depends(get_current_user)])
+app.include_router(reminders.router, dependencies=[Depends(get_current_user)])
 
 @app.get("/")
 def health():
