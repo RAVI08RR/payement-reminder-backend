@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database import get_db
 from models import User,Invoice
-from schemas import UserResponse,InvoiceResponse, UserUpdate, ForgotPasswordRequest, ResetPasswordRequest, ResetPasswordIDRequest
+from schemas import UserResponse,InvoiceResponse, UserUpdate, ForgotPasswordRequest, ResetPasswordFlowRequest
 from utils.security import hash_password
 from sqlalchemy.orm import joinedload
 from sqlalchemy import func, case
