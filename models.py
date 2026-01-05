@@ -11,7 +11,7 @@ class User(Base):
     email = Column(String, unique=True, index=True, nullable=False)
     # hashed_password = Column(String, nullable=False)
     password = Column(String(150), nullable=False)
-    invoices = relationship("Invoice", back_populates="user")
+    invoices = relationship("Invoice", back_populates="user", cascade="all, delete-orphan")
     role = Column(String(20), nullable=False, default="user")
 
 class Invoice(Base):
@@ -28,6 +28,7 @@ class Invoice(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     user = relationship("User", back_populates="invoices")
     user_email = Column(String, nullable=False)
+    reminders = relationship("Reminder", back_populates="invoice", cascade="all, delete-orphan")
 
 
 
@@ -45,7 +46,7 @@ class Reminder(Base):
     sent_at = Column(DateTime(timezone=True), server_default=func.now())
 
     user = relationship("User")
-    invoice = relationship("Invoice")
+    invoice = relationship("Invoice", back_populates="reminders")
 
 class PasswordResetToken(Base) :
     __tablename__ = "password_reset_tokens"
